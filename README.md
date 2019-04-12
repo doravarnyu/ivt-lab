@@ -4,6 +4,8 @@ This is a sample application for the [Integration and Verification Techniques](h
 
 The application is simplified and deliberately contains bugs.
 
+My job will be to find them with Travis and fix them.
+
 ## Getting started
 
 - The project is implemented in Java 8.

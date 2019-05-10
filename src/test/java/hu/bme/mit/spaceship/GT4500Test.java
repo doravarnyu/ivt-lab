@@ -3,6 +3,8 @@ package hu.bme.mit.spaceship;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.mockito.Mockito.*;
 
@@ -140,5 +142,69 @@ public class GT4500Test {
     verify(mockPrimaryStore, times(1)).fire(1);
     verify(mockSecondaryStore, times(1)).fire(1);
   }
+
+  @Test
+  public void fireTorpedo_Single_Alternating_Success() {
+    // Arrange
+    when(mockPrimaryStore.fire(1)).thenReturn(true);
+    when(mockSecondaryStore.fire(1)).thenReturn(true);
+
+    // Act
+    ship.fireTorpedo(FiringMode.SINGLE);
+    boolean result = ship.fireTorpedo(FiringMode.SINGLE);
+
+    // Assert
+    assertEquals(true, result);
+    verify(mockPrimaryStore, times(1)).fire(1);
+    verify(mockSecondaryStore, times(1)).fire(1);
+  }
+
+  @Test
+  public void fireTorpedo_Single_Secondary_Empty() {
+    // Arrange
+    when(mockPrimaryStore.fire(1)).thenReturn(true);
+    when(mockSecondaryStore.isEmpty()).thenReturn(true);
+
+    // Act
+    ship.fireTorpedo(FiringMode.SINGLE);
+    boolean result = ship.fireTorpedo(FiringMode.SINGLE);
+
+    // Assert
+    assertEquals(true, result);
+    verify(mockPrimaryStore, times(2)).fire(1);
+    verify(mockSecondaryStore, times(0)).fire(1);
+  }
+
+  @Test
+  public void fireLaser_Failure() {
+    // Act
+    boolean result = ship.fireLaser(FiringMode.SINGLE);
+
+    // Assert
+    assertEquals(false, result);
+    verify(mockPrimaryStore, times(0)).fire(1);
+    verify(mockSecondaryStore, times(0)).fire(1);
+  }
+
+  @ParameterizedTest
+  @ValueSource(ints = { 1, 2, 3, 4 })
+  public void fireTorpedo_Single_Alternating_Success(int nRounds) {
+    // Arrange
+    when(mockPrimaryStore.fire(1)).thenReturn(true);
+    when(mockSecondaryStore.fire(1)).thenReturn(true);
+
+    // Act
+    boolean result = true;
+    for (int i = 0; i < nRounds; i++) {
+	result = ship.fireTorpedo(FiringMode.SINGLE);
+	if (!result) break;
+    }
+    
+    // Assert
+    assertEquals(true, result);
+    verify(mockPrimaryStore, times( (int)((nRounds+1)/2)) ).fire(1);
+    verify(mockSecondaryStore, times( (int)(nRounds/2)) ).fire(1);
+  }
+
 
 }

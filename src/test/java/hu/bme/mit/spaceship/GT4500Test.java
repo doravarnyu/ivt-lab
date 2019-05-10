@@ -45,4 +45,84 @@ public class GT4500Test {
     assertEquals(true, result);
   }
 
+  @Test
+  public void fireTorpedo_Single_First_Store_Failure() {
+    // Arrange
+    when(mockPrimaryStore.isEmpty()).thenReturn(false);
+    when(mockPrimaryStore.fire(1)).thenReturn(false);
+
+    // Act
+    boolean result = ship.fireTorpedo(FiringMode.SINGLE);
+
+    // Assert
+    assertEquals(false, result);
+  }
+
+  @Test
+  public void fireTorpedo_Single_First_Store_Empty() {
+    // Arrange
+    when(mockPrimaryStore.isEmpty()).thenReturn(true);
+    when(mockSecondaryStore.fire(1)).thenReturn(true);
+
+    // Act
+    boolean result = ship.fireTorpedo(FiringMode.SINGLE);
+
+    // Assert
+    assertEquals(true, result);
+  }
+
+  @Test
+  public void fireTorpedo_Single_First_Store_Empty_Multiple_Firing() {
+    // Arrange
+    when(mockPrimaryStore.isEmpty()).thenReturn(true);
+    when(mockSecondaryStore.fire(1)).thenReturn(true);
+
+    // Act
+    ship.fireTorpedo(FiringMode.SINGLE);
+    ship.fireTorpedo(FiringMode.SINGLE);
+    boolean result = ship.fireTorpedo(FiringMode.SINGLE);
+
+    // Assert
+    assertEquals(true, result);
+  }
+
+  @Test
+  public void fireTorpedo_Single_Both_Fail() {
+    // Arrange
+    when(mockPrimaryStore.fire(1)).thenReturn(false);
+    when(mockSecondaryStore.fire(1)).thenReturn(false);
+
+    // Act
+    boolean result = ship.fireTorpedo(FiringMode.SINGLE);
+
+    // Assert
+    assertEquals(false, result);
+  }
+
+  @Test
+  public void fireTorpedo_All_Only_First_Succeeds() {
+    // Arrange
+    when(mockPrimaryStore.fire(1)).thenReturn(true);
+    when(mockSecondaryStore.fire(1)).thenReturn(false);
+
+    // Act
+    boolean result = ship.fireTorpedo(FiringMode.SINGLE);
+
+    // Assert
+    assertEquals(true, result);
+  }
+
+  @Test
+  public void fireTorpedo_All_Failure() {
+    // Arrange
+    when(mockPrimaryStore.fire(1)).thenReturn(false);
+    when(mockSecondaryStore.fire(1)).thenReturn(false);
+
+    // Act
+    boolean result = ship.fireTorpedo(FiringMode.SINGLE);
+
+    // Assert
+    assertEquals(false, result);
+  }
+
 }

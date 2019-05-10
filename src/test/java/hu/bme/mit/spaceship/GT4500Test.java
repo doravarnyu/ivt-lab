@@ -30,6 +30,8 @@ public class GT4500Test {
 
     // Assert
     assertEquals(true, result);
+    verify(mockPrimaryStore, times(1)).fire(1);
+    verify(mockSecondaryStore, times(0)).fire(1);
   }
 
   @Test
@@ -43,6 +45,8 @@ public class GT4500Test {
 
     // Assert
     assertEquals(true, result);
+    verify(mockPrimaryStore, times(1)).fire(1);
+    verify(mockSecondaryStore, times(1)).fire(1);
   }
 
   @Test
@@ -56,6 +60,8 @@ public class GT4500Test {
 
     // Assert
     assertEquals(false, result);
+    verify(mockPrimaryStore, times(1)).fire(1);
+    verify(mockSecondaryStore, times(0)).fire(1);
   }
 
   @Test
@@ -69,6 +75,8 @@ public class GT4500Test {
 
     // Assert
     assertEquals(true, result);
+    verify(mockPrimaryStore, times(0)).fire(1);
+    verify(mockSecondaryStore, times(1)).fire(1);
   }
 
   @Test
@@ -84,19 +92,23 @@ public class GT4500Test {
 
     // Assert
     assertEquals(true, result);
+    verify(mockPrimaryStore, times(0)).fire(1);
+    verify(mockSecondaryStore, times(3)).fire(1);
   }
 
   @Test
-  public void fireTorpedo_Single_Both_Fail() {
+  public void fireTorpedo_Single_Both_Empty() {
     // Arrange
-    when(mockPrimaryStore.fire(1)).thenReturn(false);
-    when(mockSecondaryStore.fire(1)).thenReturn(false);
+    when(mockPrimaryStore.isEmpty()).thenReturn(true);
+    when(mockSecondaryStore.isEmpty()).thenReturn(true);
 
     // Act
     boolean result = ship.fireTorpedo(FiringMode.SINGLE);
 
     // Assert
     assertEquals(false, result);
+    verify(mockPrimaryStore, times(0)).fire(1);
+    verify(mockSecondaryStore, times(0)).fire(1);
   }
 
   @Test
@@ -106,10 +118,12 @@ public class GT4500Test {
     when(mockSecondaryStore.fire(1)).thenReturn(false);
 
     // Act
-    boolean result = ship.fireTorpedo(FiringMode.SINGLE);
+    boolean result = ship.fireTorpedo(FiringMode.ALL);
 
     // Assert
     assertEquals(true, result);
+    verify(mockPrimaryStore, times(1)).fire(1);
+    verify(mockSecondaryStore, times(1)).fire(1);
   }
 
   @Test
@@ -119,10 +133,12 @@ public class GT4500Test {
     when(mockSecondaryStore.fire(1)).thenReturn(false);
 
     // Act
-    boolean result = ship.fireTorpedo(FiringMode.SINGLE);
+    boolean result = ship.fireTorpedo(FiringMode.ALL);
 
     // Assert
     assertEquals(false, result);
+    verify(mockPrimaryStore, times(1)).fire(1);
+    verify(mockSecondaryStore, times(1)).fire(1);
   }
 
 }
